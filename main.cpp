@@ -5,7 +5,7 @@
 
 int main()
 {
-	Output *out1 = new Output("First output");
+	Output *out1 = new Output("First output", true);
 	Output *out2 = new Output("Second output");
 
 	Scheduler *sched = Scheduler::getInstance();

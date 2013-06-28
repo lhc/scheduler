@@ -20,8 +20,19 @@ void Scheduler::run()
 	while (!processes.empty())
 	{
 		for (int i = 0; i < processes.size(); i++) {
-			if (!processes.at(i)->execute())
-				processes.erase(processes.begin()+i);
+			Process *proc = processes.at(i);
+			switch(proc->deferredReason_)
+			{
+				case Process::Yielded:
+					if (!proc->execute())
+						processes.erase(processes.begin()+i);
+					break;
+				case Process::Sleeping:
+					if (time(NULL) >= proc->timeToWake_)
+						if (!proc->execute())
+							processes.erase(processes.begin()+i);
+					break;
+			}
 		}
 	}
 }
