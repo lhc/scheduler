@@ -25,12 +25,18 @@ void Scheduler::run()
 			{
 				case Process::Yielded:
 					if (!proc->execute())
+					{
 						processes.erase(processes.begin()+i);
+						--i;
+					}
 					break;
 				case Process::Sleeping:
 					if (time(NULL) >= proc->timeToWake_)
 						if (!proc->execute())
+						{
 							processes.erase(processes.begin()+i);
+							--i;
+						}
 					break;
 			}
 		}
