@@ -20,25 +20,20 @@ void Scheduler::run()
 	while (!processes_.empty())
 	{
 		for (int i = 0; i < processes_.size(); i++) {
-			Process *proc = processes_.at(i);
-			switch(proc->deferredReason_)
+			currentlyRunning_ = processes_.at(i);
+			if (!currentlyRunning_->blockingReason_ || currentlyRunning_->blockingReason_->canWake())
 			{
-				case Process::Yielded:
-					if (!proc->execute())
-					{
-						processes_.erase(processes_.begin()+i);
-						--i;
-					}
-					break;
-				case Process::Sleeping:
-					if (time(NULL) >= proc->timeToWake_)
-						if (!proc->execute())
-						{
-							processes_.erase(processes_.begin()+i);
-							--i;
-						}
-					break;
+				if (!currentlyRunning_->execute())
+				{
+					processes_.erase(processes_.begin()+i);
+					--i;
+				}
 			}
 		}
 	}
+}
+
+Process *Scheduler::getRunningProcess() const
+{
+	return currentlyRunning_;
 }

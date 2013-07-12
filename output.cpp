@@ -1,4 +1,6 @@
 #include "output.h"
+#include "yelded.h"
+#include "sleeping.h"
 #include <iostream>
 
 bool Output::execute()

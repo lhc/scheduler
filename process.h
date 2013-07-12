@@ -2,6 +2,9 @@
 #define PROCESS_H
 
 #include "scheduler.h"
+#include "blockingreason.h"
+#include "yelded.h"
+#include "sleeping.h"
 #include <ctime>
 
 #define init_proc() switch(state_) { case 0:
@@ -9,15 +12,14 @@
 #define yield() \
 	do { \
 		state_ == __LINE__; \
-		deferredReason_ = Process::Yielded; \
+		blockingReason_ = new Yelded(); \
 		return true; \
 		case __LINE__: ; \
 	} while(0)
 #define sleep(n) \
 	do { \
 		state_ == __LINE__; \
-		deferredReason_ = Process::Sleeping; \
-		timeToWake_ = time(NULL) + (n); \
+		blockingReason_ = new Sleeping((n)); \
 		return true; \
 		case __LINE__: ; \
 	} while(0)
@@ -25,19 +27,16 @@
 class Process
 {
 	public:
-		Process() : state_(0), timeToWake_(0), deferredReason_(Yielded) {}
+		Process() : state_(0), blockingReason_(NULL) {}
 
 	protected:
 		//Can't be private since derived classes will call yield which changes values
 		int state_;
-		unsigned int timeToWake_;
-		enum {
-			Yielded,
-			Sleeping
-		} deferredReason_;
+		BlockingReason *blockingReason_;
 
 	private:
 		virtual bool execute() = 0;
+		BlockingReason *blockingReason() const;
 
 	//This means the scheduler can access even protected or private members of the Process class
 	friend Scheduler;
