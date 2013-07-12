@@ -11,12 +11,14 @@ class Scheduler
 		static Scheduler *getInstance();
 		void addProcess(Process *p);
 		void run();
+		Process *getRunningProcess() const;
 
 	private:
-		static Scheduler *instance;
+		static Scheduler *instance_;
 		Scheduler() {}
 		~Scheduler() {}
-		std::vector<Process*> processes;
+		std::vector<Process*> processes_;
+		Process *currentlyRunning_;
 };
 
 #endif // SCHEDULER_H
