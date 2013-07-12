@@ -13,10 +13,10 @@ class Scheduler
 		void run();
 
 	private:
-		static Scheduler *instance;
+		static Scheduler *instance_;
 		Scheduler() {}
 		~Scheduler() {}
-		std::vector<Process*> processes;
+		std::vector<Process*> processes_;
 };
 
 #endif // SCHEDULER_H

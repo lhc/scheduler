@@ -1,32 +1,32 @@
 #include "scheduler.h"
 #include "process.h"
 
-Scheduler *Scheduler::instance = 0;
+Scheduler *Scheduler::instance_ = 0;
 
 Scheduler *Scheduler::getInstance()
 {
-	if (!instance)
-		instance = new Scheduler();
-	return instance;
+	if (!instance_)
+		instance_ = new Scheduler();
+	return instance_;
 }
 
 void Scheduler::addProcess(Process *p)
 {
-	processes.push_back(p);
+	processes_.push_back(p);
 }
 
 void Scheduler::run()
 {
-	while (!processes.empty())
+	while (!processes_.empty())
 	{
-		for (int i = 0; i < processes.size(); i++) {
-			Process *proc = processes.at(i);
+		for (int i = 0; i < processes_.size(); i++) {
+			Process *proc = processes_.at(i);
 			switch(proc->deferredReason_)
 			{
 				case Process::Yielded:
 					if (!proc->execute())
 					{
-						processes.erase(processes.begin()+i);
+						processes_.erase(processes_.begin()+i);
 						--i;
 					}
 					break;
@@ -34,7 +34,7 @@ void Scheduler::run()
 					if (time(NULL) >= proc->timeToWake_)
 						if (!proc->execute())
 						{
-							processes.erase(processes.begin()+i);
+							processes_.erase(processes_.begin()+i);
 							--i;
 						}
 					break;
